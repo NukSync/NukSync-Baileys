@@ -1,0 +1,46 @@
+name: Baileys Setup Fix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Ambil repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3. FIX KELUARIN SEMUA ISI FOLDER BAILEYS-MAIN
+      - name: Extract Baileys-main to root
+        run: |
+          echo "Before:"
+          ls -R
+
+          if [ -d "Baileys-main" ]; then
+            echo "Moving files out..."
+
+            # pindahkan SEMUA isi (file + folder + hidden aman)
+            find Baileys-main -mindepth 1 -maxdepth 1 -exec mv -t . {} +
+
+            # hapus folder kosong
+            rm -rf Baileys-main
+          fi
+
+          echo "After:"
+          ls -R
+
+      # 4. Install dependency
+      - name: Install dependencies
+        run: npm install
+
+      # 5. Run bot
+      - name: Start Baileys bot
+        run: node index.js
